@@ -5,7 +5,7 @@
 Buat virtualenv dengan perintah “python -m venv ENV” 
 Aktifkan ENV dengan ketik “ENV\Scripts\activate”
 Buka CMD dan masuk kedirektori Submission
-cd dashboard
+cd Dashboard
 ```
 
 ## Run steamlit app
