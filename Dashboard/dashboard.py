@@ -1,34 +1,58 @@
 import streamlit as st
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
-data = pd.read_csv('hour.csv')
+data = pd.read_csv("all_data.csv")
 
-st.title("Bike Sharing Dashboard")
+st.title("Analisis Data Bike Sharing")
 
-avg_rentals_by_weather = data.groupby('weathersit')['cnt'].mean().reset_index()
+st.header("1. Persentase Peningkatan/Penurunan Penyewaan Sepeda")
+holiday_data = data[data['holiday'] == 1]
+non_holiday_data = data[data['holiday'] == 0]
 
-st.subheader('Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca')
-fig, ax = plt.subplots(figsize=(8, 5))
-sns.barplot(x='weathersit', y='cnt', data=avg_rentals_by_weather, ax=ax)
-ax.set_title('Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca')
-ax.set_xlabel('Kondisi Cuaca')
-ax.set_ylabel('Rata-rata Jumlah Penyewaan')
-ax.set_xticks(np.arange(len(avg_rentals_by_weather['weathersit'])))
-ax.set_xticklabels(['Clear', 'Mist + Cloudy', 'Light Snow/Rain', 'Heavy Rain/Snow'], rotation=45)
-ax.grid(axis='y')
-st.pyplot(fig)
+average_holiday_rentals = holiday_data['cnt'].mean()
+average_non_holiday_rentals = non_holiday_data['cnt'].mean()
+percentage_change = ((average_holiday_rentals - average_non_holiday_rentals) / average_non_holiday_rentals) * 100
 
-rentals_by_hour = data.groupby('hr')['cnt'].sum().reset_index()
+st.write(f"Rata-rata penyewaan sepeda pada hari libur: {average_holiday_rentals:.2f}")
+st.write(f"Rata-rata penyewaan sepeda pada hari biasa: {average_non_holiday_rentals:.2f}")
+st.write(f"Persentase perubahan: {percentage_change:.2f}%")
 
-st.subheader('Total Penyewaan Sepeda Berdasarkan Jam')
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.lineplot(x='hr', y='cnt', data=rentals_by_hour, marker='o', color='blue', ax=ax)
-ax.set_title('Total Penyewaan Sepeda Berdasarkan Jam dalam Sehari')
-ax.set_xlabel('Jam dalam Sehari')
-ax.set_ylabel('Total Jumlah Penyewaan')
-ax.set_xticks(np.arange(0, 24, step=1)) 
-ax.grid()
-st.pyplot(fig)
+labels = ['Holiday', 'Weekday']
+averages = [average_holiday_rentals, average_non_holiday_rentals]
+
+plt.figure(figsize=(8, 6))
+plt.bar(labels, averages, color=['orange', 'blue'])
+plt.title('Average Bike Rentals on Holidays vs Weekday', fontsize=16)
+plt.ylabel('Average Bike Rentals', fontsize=12)
+plt.xlabel('Day Type', fontsize=12)
+
+for i, avg in enumerate(averages):
+    plt.text(i, avg + 100, f'{avg:.2f}', ha='center', fontsize=12)
+
+st.pyplot(plt)
+
+st.header("2. Pengaruh Cuaca terhadap Penyewaan Sepeda")
+avg_cnt_by_weather = data.groupby('weathersit')['cnt'].mean()
+
+weather_conditions = {
+    1: 'Clear or Partly Cloudy',
+    2: 'Misty or Cloudy',
+    3: 'Light Snow or Rain',
+    4: 'Heavy Rain or Storm'
+}
+
+avg_cnt_by_weather.index = avg_cnt_by_weather.index.map(weather_conditions)
+
+plt.figure(figsize=(8, 6))
+plt.bar(avg_cnt_by_weather.index, avg_cnt_by_weather.values, color=['green', 'blue', 'orange', 'red'])
+plt.title('Average Bike Rentals by Weather Condition', fontsize=16)
+plt.xlabel('Weather Condition', fontsize=12)
+plt.ylabel('Average Bike Rentals', fontsize=12)
+
+for i, value in enumerate(avg_cnt_by_weather.values):
+    plt.text(i, value + 50, f'{value:.2f}', ha='center', fontsize=12)
+
+st.pyplot(plt)
