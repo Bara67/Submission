@@ -9,11 +9,11 @@ data = pd.read_csv("all_data.csv")
 st.title("Analisis Data Bike Sharing")
 
 st.header("1. Persentase Peningkatan/Penurunan Penyewaan Sepeda")
-holiday_data = data[data['holiday'] == 1]
-non_holiday_data = data[data['holiday'] == 0]
+holiday_data = data[data['holiday_x'] == 1]
+non_holiday_data = data[data['holiday_x'] == 0]
 
-average_holiday_rentals = holiday_data['cnt'].mean()
-average_non_holiday_rentals = non_holiday_data['cnt'].mean()
+average_holiday_rentals = holiday_data['cnt_y'].mean()
+average_non_holiday_rentals = non_holiday_data['cnt_y'].mean()
 percentage_change = ((average_holiday_rentals - average_non_holiday_rentals) / average_non_holiday_rentals) * 100
 
 st.write(f"Rata-rata penyewaan sepeda pada hari libur: {average_holiday_rentals:.2f}")
@@ -35,7 +35,7 @@ for i, avg in enumerate(averages):
 st.pyplot(plt)
 
 st.header("2. Pengaruh Cuaca terhadap Penyewaan Sepeda")
-avg_cnt_by_weather = data.groupby('weathersit')['cnt'].mean()
+avg_cnt_by_weather = data.groupby('weathersit_x')['cnt_y'].mean()
 
 weather_conditions = {
     1: 'Clear or Partly Cloudy',
