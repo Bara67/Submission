@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-data = pd.read_csv("all_data.csv")
+data = pd.read_csv("Dashboard/all_data.csv")
 
 st.title("Analisis Data Bike Sharing")
 
